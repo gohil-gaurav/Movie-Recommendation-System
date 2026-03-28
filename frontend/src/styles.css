@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Source Sans 3", "Segoe UI", sans-serif;
+  color: #111827;
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.home {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 3rem;
+}
+
+.home h1 {
+  margin-bottom: 0.3rem;
+  font-size: 2.2rem;
+}
+
+.home form {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) auto;
+  gap: 0.75rem;
+  align-items: end;
+  margin: 1.5rem 0 2rem;
+}
+
+.home input {
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+}
+
+.home button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: #111827;
+  color: white;
+  cursor: pointer;
+}
+
+.movie-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .home form {
+    grid-template-columns: 1fr;
+  }
+}
