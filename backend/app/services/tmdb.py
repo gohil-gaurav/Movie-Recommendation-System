@@ -19,6 +19,28 @@ TMDB_GENRE_IDS: dict[str, int] = {
     "sci-fi": 878,
 }
 
+TMDB_GENRE_NAMES: dict[int, str] = {
+    28: "Action",
+    12: "Adventure",
+    16: "Animation",
+    35: "Comedy",
+    80: "Crime",
+    99: "Documentary",
+    18: "Drama",
+    10751: "Family",
+    14: "Fantasy",
+    36: "History",
+    27: "Horror",
+    10402: "Music",
+    9648: "Mystery",
+    10749: "Romance",
+    878: "Sci-Fi",
+    10770: "TV Movie",
+    53: "Thriller",
+    10752: "War",
+    37: "Western",
+}
+
 _CACHE_SIZE = 512
 _movie_cache: "OrderedDict[str, Dict[str, Any]]" = OrderedDict()
 
@@ -67,11 +89,18 @@ def _format_tmdb_list_item(movie: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize TMDB movie list items to frontend-friendly shape."""
 
     poster_path = movie.get("poster_path")
+    release_date = str(movie.get("release_date") or "")
+    release_year = int(release_date[:4]) if len(release_date) >= 4 and release_date[:4].isdigit() else None
+    genre_ids = movie.get("genre_ids") or []
+    genres = [TMDB_GENRE_NAMES.get(int(genre_id), str(genre_id)) for genre_id in genre_ids if str(genre_id).isdigit()]
+
     return {
         "id": movie.get("id"),
         "title": movie.get("title") or movie.get("name") or "Untitled",
         "overview": movie.get("overview"),
         "rating": movie.get("vote_average"),
+        "genres": genres,
+        "release_year": release_year,
         "tagline": None,
         "poster": f"{TMDB_IMAGE_BASE_URL}{poster_path}" if poster_path else None,
     }
@@ -212,6 +241,10 @@ async def get_movie_details(title: str) -> Dict[str, Any]:
 
     movie = results[0]
     poster_path = movie.get("poster_path")
+    release_date = str(movie.get("release_date") or "")
+    release_year = int(release_date[:4]) if len(release_date) >= 4 and release_date[:4].isdigit() else None
+    genre_ids = movie.get("genre_ids") or []
+    genres = [TMDB_GENRE_NAMES.get(int(genre_id), str(genre_id)) for genre_id in genre_ids if str(genre_id).isdigit()]
 
     details = {
         "title": movie.get("title") or title.strip(),
@@ -219,6 +252,8 @@ async def get_movie_details(title: str) -> Dict[str, Any]:
         if poster_path
         else None,
         "rating": movie.get("vote_average"),
+        "genres": genres,
+        "release_year": release_year,
         "overview": movie.get("overview"),
     }
 

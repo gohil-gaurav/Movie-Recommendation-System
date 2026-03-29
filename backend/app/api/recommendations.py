@@ -60,7 +60,8 @@ def _tmdb_details_to_movie_payload(title: str, tmdb_details: Dict[str, Any]) -> 
     return {
         "title": tmdb_details.get("title") or title.strip(),
         "overview": tmdb_details.get("overview"),
-        "genres": [],
+        "genres": tmdb_details.get("genres") or [],
+        "release_year": tmdb_details.get("release_year"),
         "rating": tmdb_details.get("rating"),
         "popularity": None,
         "tagline": None,

@@ -116,6 +116,7 @@ def _get_local_details(
         "title": _get_value(row, "title") or title,
         "overview": _get_value(row, "overview"),
         "genres": _normalize_genres(_get_value(row, "genres")),
+        "release_year": _extract_release_year(_get_value(row, "release_date")),
         "rating": _to_float(_get_value(row, "vote_average")),
         "popularity": _to_float(_get_value(row, "popularity")),
         "tagline": _get_value(row, "tagline"),
@@ -193,3 +194,17 @@ def _to_float(value: Any) -> float | None:
         return float(value)
     except Exception:
         return None
+
+
+def _extract_release_year(value: Any) -> int | None:
+    """Extract a four-digit release year from date-like values."""
+
+    if value is None:
+        return None
+    raw = str(value).strip()
+    if len(raw) < 4:
+        return None
+    year = raw[:4]
+    if not year.isdigit():
+        return None
+    return int(year)

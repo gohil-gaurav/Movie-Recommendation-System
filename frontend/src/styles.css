@@ -25,53 +25,108 @@ a {
   position: relative;
   display: grid;
   grid-template-columns: minmax(260px, 1fr);
-  gap: 2.5rem;
+  gap: 2.8rem;
   align-items: center;
-  background-image: linear-gradient(
-      90deg,
-      rgba(10, 10, 12, 0.95) 0%,
-      rgba(10, 10, 12, 0.6) 55%,
-      rgba(10, 10, 12, 0.15) 100%
-    ),
-    var(--hero-bg);
+  background-color: #0a0b10;
+  background-image: var(--hero-bg);
   background-size: cover;
   background-position: center;
   border-radius: 24px;
-  padding: 3rem;
-  min-height: 360px;
+  padding: 3.75rem 3.5rem 3.35rem;
+  min-height: 480px;
   box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
   margin-bottom: 2.5rem;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.hero::after {
+.hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    180deg,
-    rgba(7, 7, 10, 0.05) 0%,
-    rgba(7, 7, 10, 0.65) 85%,
-    rgba(7, 7, 10, 0.9) 100%
+    90deg,
+    rgba(5, 6, 10, 0.95) 0%,
+    rgba(5, 6, 10, 0.86) 34%,
+    rgba(5, 6, 10, 0.42) 64%,
+    rgba(5, 6, 10, 0.12) 100%
   );
+  pointer-events: none;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 72% 48%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.58) 100%);
   pointer-events: none;
 }
 
 .hero__content {
   position: relative;
   z-index: 1;
-  max-width: 540px;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  gap: 0;
+  animation: heroFadeIn 0.55s ease-out;
 }
 
 .hero__content h1 {
   font-size: 2.5rem;
-  margin-bottom: 0.6rem;
+  margin: 0 0 1rem;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
 }
 
 .hero__content p {
   color: rgba(255, 255, 255, 0.75);
-  line-height: 1.6;
+  line-height: 1.65;
+}
+
+.hero__description {
+  margin: 0;
+}
+
+.hero__description-text {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  line-height: 1.72;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--hero-description-lines, 3);
+  overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.hero__description-text.is-expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.hero__description-toggle {
+  margin-top: var(--space-3);
+  padding: 0;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.92);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.hero__description-toggle:hover {
+  color: #ffffff;
+  text-decoration: underline;
 }
 
 .hero__label {
@@ -79,20 +134,39 @@ a {
   text-transform: uppercase;
   letter-spacing: 0.2em;
   color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 var(--space-3);
 }
 
 .hero__meta {
   display: flex;
-  gap: 1rem;
+  gap: 0.6rem;
   font-size: 0.9rem;
-  margin: 1rem 0 1.5rem;
+  margin: 0 0 var(--space-4);
   flex-wrap: wrap;
+}
+
+.hero__meta--chips {
+  margin-top: 0;
+}
+
+.hero__meta-item {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0.3rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.84rem;
+  line-height: 1;
 }
 
 .hero__actions {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  margin-top: var(--space-6);
 }
 
 
@@ -102,16 +176,48 @@ a {
   font-weight: 600;
   border: none;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 2px;
 }
 
 .button--primary {
   background: #e50914;
   color: #fff;
+  box-shadow: 0 10px 24px rgba(229, 9, 20, 0.32);
+}
+
+.button--primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 14px 28px rgba(229, 9, 20, 0.4);
 }
 
 .button--ghost {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.button--ghost:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 960px) {
@@ -120,12 +226,17 @@ a {
   }
 
   .hero {
-    padding: 2rem;
-    min-height: 320px;
+    padding: 2.7rem 2.3rem;
+    min-height: 420px;
   }
 
   .hero__content h1 {
     font-size: 2rem;
+    margin-bottom: var(--space-4);
+  }
+
+  .hero__actions {
+    margin-top: 1.25rem;
   }
 }
 
@@ -136,36 +247,59 @@ a {
 
   .hero {
     margin-bottom: 1.75rem;
-    min-height: 0;
-    padding: 1.25rem;
+    min-height: 320px;
+    padding: 1.6rem 1.2rem;
     border-radius: 16px;
-    gap: 1.25rem;
-    background-image: linear-gradient(
-        180deg,
-        rgba(10, 10, 12, 0.92) 0%,
-        rgba(10, 10, 12, 0.7) 60%,
-        rgba(10, 10, 12, 0.3) 100%
-      ),
-      var(--hero-bg);
+    gap: 1.45rem;
+  }
+
+  .hero__content {
+    --space-3: 0.5rem;
+    --space-4: 0.75rem;
+    --space-6: 1rem;
+  }
+
+  .hero::before {
+    background: linear-gradient(
+      180deg,
+      rgba(5, 6, 10, 0.95) 0%,
+      rgba(5, 6, 10, 0.72) 64%,
+      rgba(5, 6, 10, 0.42) 100%
+    );
+  }
+
+  .hero::after {
+    background: radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.62) 100%);
   }
 
   .hero__content h1 {
     font-size: 1.5rem;
+    margin-bottom: var(--space-4);
   }
 
   .hero__content p {
     font-size: 0.95rem;
-    line-height: 1.45;
+    line-height: 1.65;
+  }
+
+  .hero__description-toggle {
+    font-size: 0.82rem;
   }
 
   .hero__meta {
     gap: 0.5rem;
     font-size: 0.8rem;
-    margin: 0.75rem 0 1rem;
+  }
+
+  .hero__meta-item {
+    min-height: 24px;
+    font-size: 0.76rem;
+    padding: 0.26rem 0.58rem;
   }
 
   .hero__actions {
     gap: 0.6rem;
+    margin-top: var(--space-6);
   }
 
   .button {

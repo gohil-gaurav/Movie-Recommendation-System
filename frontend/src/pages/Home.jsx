@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+import HeroDescription from "../components/HeroDescription.jsx";
 import MovieRow from "../components/MovieRow.jsx";
 import {
   fetchPopularMovies,
@@ -8,6 +10,7 @@ import {
 } from "../services/api.js";
 
 export default function Home() {
+  const navigate = useNavigate();
   const [popularMovies, setPopularMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
@@ -105,24 +108,62 @@ export default function Home() {
     "--hero-bg": `url(${heroMovie?.poster || ""})`
   };
 
+  const handleViewDetails = () => {
+    if (!heroMovie?.title) {
+      return;
+    }
+    navigate(`/movie/${encodeURIComponent(heroMovie.title)}`);
+  };
+
+  const handleSeeRecommendations = () => {
+    const row = document.getElementById("home-recommendations");
+    if (row) {
+      row.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const heroGenres = Array.isArray(heroMovie?.genres)
+    ? heroMovie.genres.filter(Boolean).slice(0, 2).join(" • ")
+    : "";
+
+  const heroMeta = [
+    heroMovie?.rating ? `IMDb ${Number(heroMovie.rating).toFixed(1)}` : null,
+    heroGenres || null,
+    heroMovie?.release_year ? String(heroMovie.release_year) : null
+  ].filter(Boolean);
+
   return (
     <section className="page">
       <div className="hero" style={heroStyle}>
         <div className="hero__content">
           <p className="hero__label">Recommended for you</p>
           <h1>{heroMovie?.title || "Discover your next favorite movie"}</h1>
-          <p>{heroMovie?.overview || "Browse popular, top-rated, and trending picks curated from TMDB."}</p>
-          <div className="hero__meta">
-            {heroMovie?.rating ? <span>Rating {heroMovie.rating}</span> : null}
-            <span>Live TMDB lists</span>
+          <div className="hero__meta hero__meta--chips">
+            {heroMeta.map((item) => (
+              <span key={item} className="hero__meta-item">
+                {item}
+              </span>
+            ))}
           </div>
+          <HeroDescription
+            text={
+              heroMovie?.overview ||
+              "Browse popular, top-rated, and trending picks curated from TMDB."
+            }
+            lines={3}
+          />
           <div className="hero__actions">
-            <button className="button button--primary">Play</button>
-            <button className="button button--ghost">More info</button>
+            <button type="button" className="button button--primary" onClick={handleViewDetails}>
+              View Details
+            </button>
+            <button type="button" className="button button--ghost" onClick={handleSeeRecommendations}>
+              See Recommendations
+            </button>
           </div>
         </div>
       </div>
 
+      <div id="home-recommendations" />
       {trendingLoading ? <p>Loading Trending Movies...</p> : null}
       {trendingError ? <p>{trendingError}</p> : null}
       {!trendingLoading && !trendingError ? (
