@@ -4,6 +4,7 @@ import "./Sidebar.css";
 
 const navItems = [
   { label: "Home", to: "/", icon: "home" },
+  { label: "Watchlist", to: "/watchlist", icon: "bookmark" },
   { label: "Popular Movies", to: "/category/popular", icon: "fire" },
   { label: "Top Rated", to: "/category/top-rated", icon: "star" },
   { label: "Latest Movies", to: "/category/latest", icon: "spark" }
@@ -26,6 +27,9 @@ function Icon({ name }) {
     ),
     star: (
       <path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.2 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.2 5.9-.9z" />
+    ),
+    bookmark: (
+      <path d="M7 3.5A1.5 1.5 0 0 0 5.5 5v14.1c0 .3.3.5.6.3L12 15.7l5.9 3.7c.3.2.6 0 .6-.3V5A1.5 1.5 0 0 0 17 3.5z" />
     ),
     spark: (
       <path d="m7 4 2.5 5.5L15 12l-5.5 2.5L7 20l-2.5-5.5L-1 12l5.5-2.5z" />

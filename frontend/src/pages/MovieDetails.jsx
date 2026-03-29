@@ -1,9 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import HeroDescription from "../components/HeroDescription.jsx";
 import MovieRow from "../components/MovieRow.jsx";
+import Toast from "../components/Toast.jsx";
 import { fetchMovieDetails, fetchRecommendations } from "../services/api.js";
+import {
+  addToWatchlist,
+  isInWatchlist,
+  removeFromWatchlist
+} from "../utils/watchlist.js";
 
 export default function MovieDetails() {
   const { title } = useParams();
@@ -12,6 +18,31 @@ export default function MovieDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [recommendationsError, setRecommendationsError] = useState("");
+  const [inWatchlist, setInWatchlist] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
+
+  const watchlistMovie = useMemo(() => {
+    if (!movie?.title) {
+      return null;
+    }
+
+    return {
+      id: movie.id ?? movie.title,
+      title: movie.title,
+      poster: movie.poster || null,
+      rating: movie.rating ?? null
+    };
+  }, [movie]);
+
+  useEffect(() => {
+    if (!watchlistMovie?.id) {
+      setInWatchlist(false);
+      return;
+    }
+
+    setInWatchlist(isInWatchlist(watchlistMovie.id));
+  }, [watchlistMovie]);
 
   const handleSeeRecommendations = () => {
     const row = document.getElementById("details-recommendations");
@@ -20,21 +51,29 @@ export default function MovieDetails() {
     }
   };
 
-  const handleAddToWatchlist = () => {
-    if (!movie?.title) {
+  const handleToggleWatchlist = () => {
+    if (!watchlistMovie?.id) {
       return;
     }
 
-    const key = "watchlist";
-    const existing = JSON.parse(localStorage.getItem(key) || "[]");
-    const alreadyAdded = existing.some((item) => item?.title === movie.title);
-
-    if (alreadyAdded) {
+    if (inWatchlist) {
+      const removed = removeFromWatchlist(watchlistMovie.id);
+      if (!removed) {
+        return;
+      }
+      setInWatchlist(false);
+      setToastMessage("Removed from watchlist");
+      setToastVisible(true);
       return;
     }
 
-    const next = [...existing, { title: movie.title, poster: movie.poster }];
-    localStorage.setItem(key, JSON.stringify(next));
+    const added = addToWatchlist(watchlistMovie);
+    if (!added) {
+      return;
+    }
+    setInWatchlist(true);
+    setToastMessage("Added to watchlist");
+    setToastVisible(true);
   };
 
   useEffect(() => {
@@ -138,8 +177,8 @@ export default function MovieDetails() {
             <button type="button" className="button button--primary" onClick={handleSeeRecommendations}>
               See Recommendations
             </button>
-            <button type="button" className="button button--ghost" onClick={handleAddToWatchlist}>
-              Add to Watchlist
+            <button type="button" className="button button--ghost" onClick={handleToggleWatchlist}>
+              {inWatchlist ? "Remove from Watchlist" : "Add to Watchlist"}
             </button>
           </div>
         </div>
@@ -148,6 +187,11 @@ export default function MovieDetails() {
       <div id="details-recommendations" />
       <MovieRow title="Recommended for you" movies={recommendations} />
       {recommendationsError ? <p>{recommendationsError}</p> : null}
+      <Toast
+        message={toastMessage}
+        visible={toastVisible}
+        onClose={() => setToastVisible(false)}
+      />
     </section>
   );
 }
