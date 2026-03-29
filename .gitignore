@@ -9,6 +9,7 @@
 *.pem
 *.cert
 .env.example
+.env
 
 # ===========================
 # Backend (Python/FastAPI)
