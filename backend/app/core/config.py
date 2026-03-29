@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     debug: bool = Field(False, env="DEBUG")
 
     # CORS settings
-    cors_origins: str = Field("http://localhost:3000", env="CORS_ORIGINS")
+    cors_origins: str = Field("*", env="CORS_ORIGINS")
 
     # External service settings
     tmdb_api_key: str = Field(..., env="TMDB_API_KEY")
