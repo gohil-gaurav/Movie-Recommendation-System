@@ -39,6 +39,18 @@ export async function fetchTrendingMovies() {
   return Array.isArray(data.results) ? data.results : [];
 }
 
+export async function fetchMoviesByGenre(genre) {
+  if (!genre || !String(genre).trim()) {
+    return [];
+  }
+
+  const response = await fetch(
+    `${API_BASE_URL}/movies/genre?genre=${encodeURIComponent(String(genre).trim())}`
+  );
+  const data = await parseResponse(response, "Failed to fetch movies by genre.");
+  return Array.isArray(data.results) ? data.results : [];
+}
+
 export async function fetchSuggestions(query) {
   if (!query || !query.trim()) {
     return [];

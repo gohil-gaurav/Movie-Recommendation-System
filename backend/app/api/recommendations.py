@@ -14,6 +14,7 @@ from app.services.tmdb import (
     TmdbError,
     TmdbRateLimitError,
     get_movie_details,
+    get_movies_by_genre,
     get_popular_movies,
     get_top_rated_movies,
     get_trending_movies,
@@ -21,6 +22,50 @@ from app.services.tmdb import (
 from app.utils import ArtifactLoadError
 
 router = APIRouter(tags=["Recommendations"])
+
+
+def _dedupe_by_movie_id(movies: list[Dict[str, Any]]) -> list[Dict[str, Any]]:
+    """Remove duplicate movies while preserving order by TMDB id when available."""
+
+    seen_ids: set[int] = set()
+    unique: list[Dict[str, Any]] = []
+    for movie in movies:
+        movie_id = movie.get("id")
+        if isinstance(movie_id, int):
+            if movie_id in seen_ids:
+                continue
+            seen_ids.add(movie_id)
+        unique.append(movie)
+    return unique
+
+
+async def _fallback_recommendations(title: str, limit: int = 10) -> list[Dict[str, Any]]:
+    """Fallback recommendations from TMDB lists when local model has no matches."""
+
+    title_lower = title.strip().lower()
+    trending = await get_trending_movies()
+    popular = await get_popular_movies()
+    merged = _dedupe_by_movie_id(trending + popular)
+
+    filtered = [
+        movie for movie in merged
+        if str(movie.get("title", "")).strip().lower() != title_lower
+    ]
+    return filtered[:limit]
+
+
+def _tmdb_details_to_movie_payload(title: str, tmdb_details: Dict[str, Any]) -> Dict[str, Any]:
+    """Convert TMDB detail response to the movie payload shape expected by frontend."""
+
+    return {
+        "title": tmdb_details.get("title") or title.strip(),
+        "overview": tmdb_details.get("overview"),
+        "genres": [],
+        "rating": tmdb_details.get("rating"),
+        "popularity": None,
+        "tagline": None,
+        "poster": tmdb_details.get("poster_path"),
+    }
 
 
 def _raise_tmdb_http_error(exc: Exception) -> None:
@@ -90,6 +135,32 @@ async def trending_movies() -> Dict[str, Any]:
 
 
 @router.get(
+    "/movies/genre",
+    summary="Get movies by genre",
+)
+async def movies_by_genre(genre: str | None = Query(None, description="Genre slug")) -> Dict[str, Any]:
+    """Return movies for supported genre slugs: action, comedy, drama, sci-fi."""
+
+    if genre is None or not genre.strip():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Query parameter 'genre' is required.",
+        )
+
+    try:
+        results = await get_movies_by_genre(genre)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+    except Exception as exc:
+        _raise_tmdb_http_error(exc)
+
+    return {"genre": genre.strip().lower(), "results": results}
+
+
+@router.get(
     "/recommend",
     summary="Get movie recommendations",
 )
@@ -136,10 +207,10 @@ async def recommend_movies(movie: str | None = Query(None, description="Movie ti
         )
 
     if not results:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="No recommendations found for the given movie.",
-        )
+        try:
+            results = await _fallback_recommendations(movie)
+        except Exception as exc:
+            _raise_tmdb_http_error(exc)
 
     return {"movie": movie.strip(), "results": results}
 
@@ -186,10 +257,11 @@ async def get_movie(title: str | None = Query(None, description="Movie title")) 
         )
 
     if not local_details:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Movie not found in local dataset.",
-        )
+        try:
+            tmdb_details = await get_movie_details(title)
+            return _tmdb_details_to_movie_payload(title, tmdb_details)
+        except Exception as exc:
+            _raise_tmdb_http_error(exc)
 
     poster = None
     try:

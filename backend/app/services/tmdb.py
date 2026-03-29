@@ -12,6 +12,13 @@ from app.core import get_settings
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
 TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
+TMDB_GENRE_IDS: dict[str, int] = {
+    "action": 28,
+    "comedy": 35,
+    "drama": 18,
+    "sci-fi": 878,
+}
+
 _CACHE_SIZE = 512
 _movie_cache: "OrderedDict[str, Dict[str, Any]]" = OrderedDict()
 
@@ -115,6 +122,43 @@ async def get_trending_movies() -> list[Dict[str, Any]]:
     """Fetch TMDB trending movies (/trending/movie/day)."""
 
     return await _fetch_tmdb_movie_list("/trending/movie/day")
+
+
+async def get_movies_by_genre(genre: str) -> list[Dict[str, Any]]:
+    """Fetch movies by genre using TMDB discover endpoint."""
+
+    normalized = genre.strip().lower()
+    genre_id = TMDB_GENRE_IDS.get(normalized)
+    if genre_id is None:
+        raise ValueError(f"Unsupported genre: {genre}")
+
+    settings = get_settings()
+    params = {
+        "api_key": settings.tmdb_api_key,
+        "language": "en-US",
+        "include_adult": "false",
+        "sort_by": "popularity.desc",
+        "with_genres": str(genre_id),
+    }
+
+    async with httpx.AsyncClient(base_url=TMDB_BASE_URL, timeout=10.0) as client:
+        response = await client.get("/discover/movie", params=params)
+
+    if response.status_code == 429:
+        raise TmdbRateLimitError("TMDB rate limit exceeded.")
+    if response.status_code >= 500:
+        raise TmdbApiError("TMDB service is currently unavailable.")
+    if response.status_code >= 400:
+        raise TmdbApiError(
+            f"TMDB request failed with status {response.status_code}."
+        )
+
+    payload = response.json()
+    results = payload.get("results", [])
+    if not isinstance(results, list):
+        return []
+
+    return [_format_tmdb_list_item(item) for item in results]
 
 
 async def get_movie_details(title: str) -> Dict[str, Any]:

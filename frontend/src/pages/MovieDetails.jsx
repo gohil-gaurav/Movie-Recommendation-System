@@ -10,6 +10,7 @@ export default function MovieDetails() {
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [recommendationsError, setRecommendationsError] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -17,25 +18,35 @@ export default function MovieDetails() {
     const load = async () => {
       setLoading(true);
       setError("");
-      try {
-        const details = await fetchMovieDetails(title);
-        const recs = await fetchRecommendations(title);
+      setRecommendationsError("");
 
-        if (!active) {
-          return;
-        }
+      const [detailsResult, recsResult] = await Promise.allSettled([
+        fetchMovieDetails(title),
+        fetchRecommendations(title)
+      ]);
 
-        setMovie(details);
-        setRecommendations(recs.results ?? []);
-      } catch (err) {
-        if (!active) {
-          return;
-        }
-        setError(err.message || "Unable to load movie details.");
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
+      if (!active) {
+        return;
+      }
+
+      if (detailsResult.status === "fulfilled") {
+        setMovie(detailsResult.value);
+      } else {
+        setMovie(null);
+        setError(detailsResult.reason?.message || "Unable to load movie details.");
+      }
+
+      if (recsResult.status === "fulfilled") {
+        setRecommendations(recsResult.value?.results ?? []);
+      } else {
+        setRecommendations([]);
+        setRecommendationsError(
+          recsResult.reason?.message || "Unable to load recommendations for this movie."
+        );
+      }
+
+      if (active) {
+        setLoading(false);
       }
     };
 
@@ -94,6 +105,7 @@ export default function MovieDetails() {
       </div>
 
       <MovieRow title="Recommended for you" movies={recommendations} />
+      {recommendationsError ? <p>{recommendationsError}</p> : null}
     </section>
   );
 }
