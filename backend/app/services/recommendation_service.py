@@ -63,6 +63,24 @@ async def get_enriched_recommendations(
     return enriched
 
 
+def get_local_movie_details(
+    title: str,
+    movies_path: str,
+    tfidf_path: str,
+    indices_path: str,
+) -> Dict[str, Any] | None:
+    """Return movie details from the local dataset for a given title."""
+
+    if not title or not title.strip():
+        return None
+
+    movies, _, index_map, index_map_lower, _ = load_recommender_artifacts(
+        movies_path, tfidf_path, indices_path
+    )
+
+    return _get_local_details(title.strip(), movies, index_map, index_map_lower)
+
+
 def _unique_in_order(titles: List[str]) -> List[str]:
     """Preserve order while removing duplicates."""
 

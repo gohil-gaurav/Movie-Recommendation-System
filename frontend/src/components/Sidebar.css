@@ -1,0 +1,127 @@
+.sidebar {
+  background: #0b0c10;
+  padding: 2rem 1.75rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  min-width: 0;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar__logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #e50914;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.sidebar__brand h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sidebar__brand p {
+  margin: 0.2rem 0 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sidebar__section {
+  margin: 1.2rem 0 0.3rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.75);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar__link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.sidebar__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.sidebar__link--active,
+.sidebar__link:hover {
+  background: rgba(229, 9, 20, 0.16);
+  color: #fff;
+}
+
+@media (max-width: 960px) {
+  .sidebar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .sidebar__nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+  }
+
+  .sidebar__section {
+    display: none;
+  }
+
+  .sidebar__link {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .sidebar {
+    padding: 0.75rem 1rem;
+  }
+
+  .sidebar__brand h2 {
+    font-size: 1rem;
+  }
+
+  .sidebar__brand p {
+    font-size: 0.78rem;
+  }
+
+  .sidebar__link {
+    font-size: 0.86rem;
+    padding: 0.55rem 0.75rem;
+  }
+}

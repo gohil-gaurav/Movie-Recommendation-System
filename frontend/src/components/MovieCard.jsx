@@ -1,19 +1,6 @@
+import { Link } from "react-router-dom";
+
 import "./MovieCard.css";
-
-const OVERVIEW_LIMIT = 160;
-
-function truncate(text) {
-  if (!text) {
-    return "Overview not available.";
-  }
-
-  const normalized = String(text).trim();
-  if (normalized.length <= OVERVIEW_LIMIT) {
-    return normalized;
-  }
-
-  return `${normalized.slice(0, OVERVIEW_LIMIT).trim()}...`;
-}
 
 function formatRating(value) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
@@ -24,22 +11,21 @@ function formatRating(value) {
 }
 
 export default function MovieCard({ movie }) {
+  const title = movie.title || "Untitled";
   return (
-    <article className="movie-card">
+    <Link className="movie-card" to={`/movie/${encodeURIComponent(title)}`}>
       <div className="movie-card__poster">
         {movie.poster ? (
-          <img src={movie.poster} alt={movie.title} loading="lazy" />
+          <img src={movie.poster} alt={title} loading="lazy" />
         ) : (
           <div className="movie-card__poster-placeholder">No image</div>
         )}
+        <span className="movie-card__rating">{formatRating(movie.rating)}</span>
       </div>
       <div className="movie-card__content">
-        <div className="movie-card__header">
-          <h3>{movie.title}</h3>
-          <span className="movie-card__rating">{formatRating(movie.rating)}</span>
-        </div>
-        <p className="movie-card__overview">{truncate(movie.overview)}</p>
+        <h3>{title}</h3>
+        <p>{movie.tagline || movie.overview}</p>
       </div>
-    </article>
+    </Link>
   );
 }

@@ -78,12 +78,17 @@ export default function SearchBar({ value, onChange, onSearch, loading }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSearch(event);
+    if (onSearch) {
+      onSearch(value);
+    }
     setOpen(false);
   };
 
   const handleSelect = (suggestion) => {
     onChange(suggestion);
+    if (onSearch) {
+      onSearch(suggestion);
+    }
     setOpen(false);
   };
 
@@ -103,7 +108,7 @@ export default function SearchBar({ value, onChange, onSearch, loading }) {
             onFocus={() => value && suggestions.length > 0 && setOpen(true)}
           />
           <button type="submit" disabled={loading}>
-            {loading ? "Searching..." : "Get Recommendations"}
+            {loading ? "Searching..." : "Discover Movies"}
           </button>
         </div>
       </form>

@@ -56,6 +56,67 @@ def _normalize_title(title: str) -> str:
     return " ".join(title.strip().split()).lower()
 
 
+def _format_tmdb_list_item(movie: Dict[str, Any]) -> Dict[str, Any]:
+    """Normalize TMDB movie list items to frontend-friendly shape."""
+
+    poster_path = movie.get("poster_path")
+    return {
+        "id": movie.get("id"),
+        "title": movie.get("title") or movie.get("name") or "Untitled",
+        "overview": movie.get("overview"),
+        "rating": movie.get("vote_average"),
+        "tagline": None,
+        "poster": f"{TMDB_IMAGE_BASE_URL}{poster_path}" if poster_path else None,
+    }
+
+
+async def _fetch_tmdb_movie_list(endpoint: str) -> list[Dict[str, Any]]:
+    """Fetch and normalize a TMDB movie list endpoint."""
+
+    settings = get_settings()
+    params = {
+        "api_key": settings.tmdb_api_key,
+        "language": "en-US",
+    }
+
+    async with httpx.AsyncClient(base_url=TMDB_BASE_URL, timeout=10.0) as client:
+        response = await client.get(endpoint, params=params)
+
+    if response.status_code == 429:
+        raise TmdbRateLimitError("TMDB rate limit exceeded.")
+    if response.status_code >= 500:
+        raise TmdbApiError("TMDB service is currently unavailable.")
+    if response.status_code >= 400:
+        raise TmdbApiError(
+            f"TMDB request failed with status {response.status_code}."
+        )
+
+    payload = response.json()
+    results = payload.get("results", [])
+    if not isinstance(results, list):
+        return []
+
+    return [_format_tmdb_list_item(item) for item in results]
+
+
+async def get_popular_movies() -> list[Dict[str, Any]]:
+    """Fetch TMDB popular movies (/movie/popular)."""
+
+    return await _fetch_tmdb_movie_list("/movie/popular")
+
+
+async def get_top_rated_movies() -> list[Dict[str, Any]]:
+    """Fetch TMDB top-rated movies (/movie/top_rated)."""
+
+    return await _fetch_tmdb_movie_list("/movie/top_rated")
+
+
+async def get_trending_movies() -> list[Dict[str, Any]]:
+    """Fetch TMDB trending movies (/trending/movie/day)."""
+
+    return await _fetch_tmdb_movie_list("/trending/movie/day")
+
+
 async def get_movie_details(title: str) -> Dict[str, Any]:
     """Fetch movie details from TMDB by title.
 
