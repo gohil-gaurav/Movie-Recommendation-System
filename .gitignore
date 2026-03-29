@@ -1,0 +1,181 @@
+# ===========================
+# Environment & Secrets
+# ===========================
+.env
+.env.local
+.env.*.local
+.env.production
+*.key
+*.pem
+*.cert
+.env.example
+
+# ===========================
+# Backend (Python/FastAPI)
+# ===========================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+*.c
+*.o
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# ===========================
+# Frontend (Node.js/React)
+# ===========================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+package-lock.json
+
+# Build & Distribution
+dist/
+build/
+.next/
+out/
+
+# Dev server
+.env.local
+.env.*.local
+
+# ===========================
+# IDE & Editor
+# ===========================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (PyCharm, IntelliJ, WebStorm, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim & Neovim
+*.swp
+*.swo
+*~
+.vimrc
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ===========================
+# OS Specific
+# ===========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+.directory
+
+# ===========================
+# Logs & Temporary Files
+# ===========================
+
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+.cache/
+.tmp/
+
+# ===========================
+# ML & Data Artifacts (Optional)
+# ===========================
+
+# Uncomment to ignore large ML model files:
+# backend/data/*.pkl
+# backend/data/*.joblib
+# *.pkl
+# *.joblib
+
+# Large data files
+# *.csv
+# *.parquet
+# *.npy
+# *.npz
+
+# ===========================
+# Miscellaneous
+# ===========================
+
+.DS_Store
+*.orig
+.project
+.pydevproject
+.settings/
+*.swp
+.vscode/settings.json
