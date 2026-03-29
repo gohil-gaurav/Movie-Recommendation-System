@@ -17,7 +17,7 @@ export default function Header() {
 
   return (
     <header className="header">
-      <div>
+      <div className="header__intro">
         <h1>Discover</h1>
         <p>Curated picks and cinematic deep dives.</p>
       </div>
@@ -28,7 +28,6 @@ export default function Header() {
           onSearch={handleSearch}
           loading={false}
         />
-        <div className="header__avatar">GA</div>
       </div>
     </header>
   );

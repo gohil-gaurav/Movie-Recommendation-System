@@ -103,12 +103,12 @@ export default function SearchBar({ value, onChange, onSearch, loading }) {
             type="text"
             value={value}
             onChange={(event) => onChange(event.target.value)}
-            placeholder="Enter a movie title"
+            placeholder="Search movies..."
             autoComplete="off"
             onFocus={() => value && suggestions.length > 0 && setOpen(true)}
           />
           <button type="submit" disabled={loading}>
-            {loading ? "Searching..." : "Discover Movies"}
+            {loading ? "Searching..." : "Discover"}
           </button>
         </div>
       </form>

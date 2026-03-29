@@ -47,8 +47,10 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
-        <span className="sidebar__logo">N</span>
-        <div>
+        <span className="sidebar__logo" aria-hidden="true">
+          <img className="sidebar__logo-image" src="/logo.png" alt="" />
+        </span>
+        <div className="sidebar__brand-copy">
           <h2>CineVault</h2>
           <p>Movie Hub</p>
         </div>

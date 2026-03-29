@@ -6,7 +6,7 @@
   gap: 2rem;
 }
 
-.header > div:first-child {
+.header__intro {
   min-width: 0;
 }
 
@@ -21,20 +21,9 @@
 }
 
 .header__actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: block;
+  width: min(560px, 100%);
   min-width: 0;
-}
-
-.header__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.1);
-  display: grid;
-  place-items: center;
-  font-weight: 600;
 }
 
 @media (max-width: 960px) {
@@ -46,8 +35,6 @@
 
   .header__actions {
     width: 100%;
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .header h1 {
@@ -67,9 +54,5 @@
 
   .header p {
     font-size: 0.9rem;
-  }
-
-  .header__avatar {
-    align-self: flex-start;
   }
 }
