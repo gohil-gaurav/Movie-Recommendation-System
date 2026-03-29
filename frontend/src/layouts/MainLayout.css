@@ -1,19 +1,47 @@
 .layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
+  --sidebar-width: 260px;
   min-height: 100vh;
   width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout > .sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  overflow-y: auto;
+  z-index: 40;
 }
 
 .layout__main {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  margin-left: var(--sidebar-width);
+  height: 100vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 @media (max-width: 960px) {
   .layout {
-    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .layout > .sidebar {
+    position: static;
+    width: auto;
+    overflow: visible;
+  }
+
+  .layout__main {
+    margin-left: 0;
+    height: auto;
+    overflow: visible;
   }
 }
 
