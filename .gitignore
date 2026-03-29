@@ -74,6 +74,7 @@ venv.bak/
 
 # Dependencies
 node_modules/
+dist/
 npm-debug.log*
 npm-error.log*
 yarn-debug.log*
