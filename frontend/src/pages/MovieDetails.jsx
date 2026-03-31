@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 
 import HeroDescription from "../components/HeroDescription.jsx";
 import MovieRow from "../components/MovieRow.jsx";
+import SkeletonGrid from "../components/SkeletonGrid.jsx";
+import "../components/Skeleton.css";
 import Toast from "../components/Toast.jsx";
 import { fetchMovieDetails, fetchRecommendations } from "../services/api.js";
 import {
@@ -123,7 +125,20 @@ export default function MovieDetails() {
   if (loading) {
     return (
       <section className="page">
-        <p>Loading movie details...</p>
+        <div className="hero hero--skeleton">
+          <div className="hero__content">
+            <div className="skeleton-line skeleton-line--label skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="hero__actions">
+              <div className="skeleton-line skeleton-line--button skeleton-shimmer" />
+              <div className="skeleton-line skeleton-line--button skeleton-shimmer" />
+            </div>
+          </div>
+        </div>
+        <SkeletonGrid title="Recommended for you" count={6} />
       </section>
     );
   }
@@ -132,7 +147,7 @@ export default function MovieDetails() {
     return (
       <section className="page">
         <h1>Movie details</h1>
-        <p>{error}</p>
+        <p className="status status--error">Unable to load movie details right now.</p>
       </section>
     );
   }
@@ -186,7 +201,9 @@ export default function MovieDetails() {
 
       <div id="details-recommendations" />
       <MovieRow title="Recommended for you" movies={recommendations} />
-      {recommendationsError ? <p>{recommendationsError}</p> : null}
+      {recommendationsError ? (
+        <p className="status status--error">Unable to load recommendations right now.</p>
+      ) : null}
       <Toast
         message={toastMessage}
         visible={toastVisible}
