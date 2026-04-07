@@ -26,11 +26,10 @@ def create_app() -> FastAPI:
     )
 
     # CORS configuration for frontend integration.
+    allowed_origins = _parse_origins(settings.cors_origins)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "https://cinevault-black.vercel.app"
-        ],
+        allow_origins=allowed_origins or ["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

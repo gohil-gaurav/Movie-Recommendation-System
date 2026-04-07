@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import MovieRow from "../components/MovieRow.jsx";
+import SkeletonGrid from "../components/SkeletonGrid.jsx";
 import {
   fetchMoviesByGenre,
   fetchPopularMovies,
@@ -82,8 +83,10 @@ export default function Category() {
   return (
     <section className="page">
       <h1>{category.title}</h1>
-      {loading ? <p>Loading {category.title}...</p> : null}
-      {error ? <p>{error}</p> : null}
+      {loading ? <SkeletonGrid title={category.title} count={6} /> : null}
+      {!loading && error ? (
+        <p className="status status--error">Unable to load {category.title} right now.</p>
+      ) : null}
       {!loading && !error ? <MovieRow title={category.title} movies={movies} /> : null}
     </section>
   );

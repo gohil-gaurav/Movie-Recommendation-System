@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import HeroDescription from "../components/HeroDescription.jsx";
 import MovieRow from "../components/MovieRow.jsx";
+import SkeletonGrid from "../components/SkeletonGrid.jsx";
+import "../components/Skeleton.css";
 import {
   fetchPopularMovies,
   fetchTopRatedMovies,
@@ -134,50 +136,72 @@ export default function Home() {
 
   return (
     <section className="page">
-      <div className="hero" style={heroStyle}>
-        <div className="hero__content">
-          <p className="hero__label">Recommended for you</p>
-          <h1>{heroMovie?.title || "Discover your next favorite movie"}</h1>
-          <div className="hero__meta hero__meta--chips">
-            {heroMeta.map((item) => (
-              <span key={item} className="hero__meta-item">
-                {item}
-              </span>
-            ))}
-          </div>
-          <HeroDescription
-            text={
-              heroMovie?.overview ||
-              "Browse popular, top-rated, and trending picks curated from TMDB."
-            }
-            lines={3}
-          />
-          <div className="hero__actions">
-            <button type="button" className="button button--primary" onClick={handleViewDetails}>
-              View Details
-            </button>
-            <button type="button" className="button button--ghost" onClick={handleSeeRecommendations}>
-              See Recommendations
-            </button>
+      {trendingLoading && popularLoading && topRatedLoading ? (
+        <div className="hero hero--skeleton">
+          <div className="hero__content">
+            <div className="skeleton-line skeleton-line--label skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="skeleton-line skeleton-line--hero-sub skeleton-shimmer" />
+            <div className="hero__actions">
+              <div className="skeleton-line skeleton-line--button skeleton-shimmer" />
+              <div className="skeleton-line skeleton-line--button skeleton-shimmer" />
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="hero" style={heroStyle}>
+          <div className="hero__content">
+            <p className="hero__label">Recommended for you</p>
+            <h1>{heroMovie?.title || "Discover your next favorite movie"}</h1>
+            <div className="hero__meta hero__meta--chips">
+              {heroMeta.map((item) => (
+                <span key={item} className="hero__meta-item">
+                  {item}
+                </span>
+              ))}
+            </div>
+            <HeroDescription
+              text={
+                heroMovie?.overview ||
+                "Browse popular, top-rated, and trending picks curated from TMDB."
+              }
+              lines={3}
+            />
+            <div className="hero__actions">
+              <button type="button" className="button button--primary" onClick={handleViewDetails}>
+                View Details
+              </button>
+              <button type="button" className="button button--ghost" onClick={handleSeeRecommendations}>
+                See Recommendations
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div id="home-recommendations" />
-      {trendingLoading ? <p>Loading Trending Movies...</p> : null}
-      {trendingError ? <p>{trendingError}</p> : null}
+      {trendingLoading ? <SkeletonGrid title="Trending Movies" count={6} /> : null}
+      {!trendingLoading && trendingError ? (
+        <p className="status status--error">Unable to load trending movies right now.</p>
+      ) : null}
       {!trendingLoading && !trendingError ? (
         <MovieRow title="Trending Movies" movies={sectionData.trending} />
       ) : null}
 
-      {popularLoading ? <p>Loading Popular Movies...</p> : null}
-      {popularError ? <p>{popularError}</p> : null}
+      {popularLoading ? <SkeletonGrid title="Popular Movies" count={6} /> : null}
+      {!popularLoading && popularError ? (
+        <p className="status status--error">Unable to load popular movies right now.</p>
+      ) : null}
       {!popularLoading && !popularError ? (
         <MovieRow title="Popular Movies" movies={sectionData.popular} />
       ) : null}
 
-      {topRatedLoading ? <p>Loading Top Rated Movies...</p> : null}
-      {topRatedError ? <p>{topRatedError}</p> : null}
+      {topRatedLoading ? <SkeletonGrid title="Top Rated Movies" count={6} /> : null}
+      {!topRatedLoading && topRatedError ? (
+        <p className="status status--error">Unable to load top rated movies right now.</p>
+      ) : null}
       {!topRatedLoading && !topRatedError ? (
         <MovieRow title="Top Rated Movies" movies={sectionData.topRated} />
       ) : null}
